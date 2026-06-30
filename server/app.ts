@@ -1,0 +1,32 @@
+import { serveStatic } from '@hono/node-server/serve-static';
+import { logger } from '@server/lib/logger';
+import { httpLogger } from '@server/lib/middlewares/http-logger';
+import { todoRoute } from '@server/routes/todo';
+import { Hono } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+
+const app = new Hono();
+
+app.use('*', httpLogger());
+
+const apiRoutes = app.basePath('/api').route('/todo', todoRoute);
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    if (err.cause instanceof Error) {
+      err.message = err.message + ': ' + err.cause.message;
+    }
+    return err.getResponse();
+  } else if (err instanceof Error) {
+    logger.error(err.message);
+  } else {
+    logger.error(err);
+  }
+  return c.json({ message: 'Internal server error. Please try again later.' }, 500);
+});
+
+app.get('*', serveStatic({ root: './client/dist' }));
+app.get('*', serveStatic({ path: './client/dist/index.html' }));
+
+export type ApiRoutes = typeof apiRoutes;
+export default app;
