@@ -73,6 +73,17 @@ npm run dev:client   # Vite dev server
 | `npm run db:studio`                  | Drizzle Studio                    |
 | `npm run db:seed`                    | Seed the database                 |
 
+## Docker
+
+Production image builds the Vite client, then runs the Hono server which serves `client/dist` statically (same flow as `npm run build` → `npm start`). On start it runs `drizzle-kit push` so the SQLite schema exists.
+
+```bash
+docker build -t boilerplate .
+docker run --rm -p 3000:3000 -v boilerplate-data:/app/.data boilerplate
+```
+
+Override `PORT` / `DATABASE_URL` with `-e` if needed. Persist SQLite via the `/app/.data` volume.
+
 ## Conventions
 
 - **Type-first / API-first** — define Zod schemas and Hono routes before UI; export chained routers so the client gets full RPC inference.

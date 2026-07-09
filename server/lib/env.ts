@@ -6,14 +6,14 @@ const envSchema = z.object({
   DATABASE_URL: z.string(),
 });
 
-const { data, error } = envSchema.safeParse(process.env);
+const parsed = envSchema.safeParse(process.env);
 
-if (error) {
+if (!parsed.success) {
   logger.error(
     'Missing or invalid environment variables:',
-    error.issues.map((issue) => issue.path.join('.')).join(', ')
+    parsed.error.issues.map((issue) => issue.path.join('.')).join(', ')
   );
   process.exit(1);
 }
 
-export const env = data;
+export const env = parsed.data;
