@@ -1,0 +1,54 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Structure Guide
+
+This is a full-stack TypeScript project with a client-server architecture using modern web technologies.
+
+## Project Layout
+
+- **Client (`client/`)**: Contains the client-side application code.
+- **Server (`server/`)**: Contains the server-side application code.
+- **Shared (`server/shared/`)**: Contains the shared types and schemas between client and server.
+
+## Key Technologies
+
+- **Runtime**: Node.js for JavaScript/TypeScript execution
+- **Backend**: Hono web framework with RPC type generation
+- **Database**: Drizzle ORM for database operations
+- **Frontend**: Vite 8 + React 19 with React Compiler + Shadcn/ui components
+- **Data Fetching**: Tanstack Query for data fetching, caching and mutations.
+- **Routing**: Tanstack Router for client-side routing.
+- **Validation**: Zod v4 for schema validation
+- **Styling**: TailwindCSS V4
+- **Linting**: Oxlint for linting the code
+- **Formatting**: Oxfmt for formatting the code
+
+## Development Practices
+
+- **Type-First Development**: Define types and schemas before implementation
+- **API-First**: Design API contracts using Hono RPC for type safety
+- **Component-Driven**: Build reusable UI components with Shadcn/ui
+- **Validation-Heavy**: Validate all inputs with Zod schemas
+
+## File Organization
+
+- **Server Logic**: Place in `server/` with appropriate subdirectories
+- **Client Components**: Organize in `client/src/components/`
+- **Shared Code**: Use `server/shared/` for types and schemas
+- **Route Handlers**: Group related routes in `server/routes/`
+
+## Best Practices
+
+- **Error Handling**: Implement proper error boundaries and HTTP exceptions
+- **Linting**: Run `npm run lint` to lint the code
+- **Code Formatting**: Run `npm run fmt` to format the code
+
+## Type Safety Requirements
+
+- **Strict Typing**: All functions and objects must be strongly typed
+- **Interface Definition**: Define interfaces or types for complex objects
+- **Function Signatures**: Type all parameters and return values
+- **No Any**: Avoid `any` type; use proper typing or `unknown`

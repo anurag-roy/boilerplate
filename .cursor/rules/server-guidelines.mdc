@@ -1,0 +1,51 @@
+---
+description: 
+globs: server/*
+alwaysApply: false
+---
+# Server Development Guidelines
+
+## Import Standards
+
+- **Module System**: ES modules (`import ... from ...`)
+- **Path Aliases**: Use `@server/` prefix (e.g., `@server/lib/logger`)
+- **Shared Code**: Import from `@shared/types` and `@shared/schemas`
+
+## Code Style
+
+- **Naming**: `camelCase` for variables/functions, `PascalCase` for classes/types, `kebab-case` for file names.
+- **Async**: Prefer `async/await` for promise-based operations
+
+## Route Development
+
+Always chain route handlers and export router for Hono RPC type inference:
+
+```typescript
+const authRouter = new Hono()
+  .post("/login", routeValidator("json", loginSchema), async (c) => {
+    // Route handler
+  })
+  .get("/me", protect, async (c) => {
+    // Route handler
+  });
+export default authRouter;
+```
+
+## Database
+
+- The project `drizzle-orm` for database operations.
+- Use `db` from `@server/db/index.ts` for database queries.
+- Use `@server/db/schema.ts` for database schema definitions.
+
+## Error Handling
+
+- **Validation**: Use `@server/middlewares/validator` for route validation
+- **HTTP Errors**: Use Hono's `HTTPException` for API errors
+- **Logging**: Use `@server/lib/logger` for application-level error logging
+- **Environment**: Use `@server/lib/env` for environment variable management
+
+## Type Safety
+
+- **Strong Typing**: Define interfaces/types for all objects and functions
+- **Schema Validation**: Use Zod v4 for runtime validation
+- **Shared Types**: Use `@shared/types` for cross-boundary types
