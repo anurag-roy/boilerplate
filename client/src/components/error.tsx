@@ -13,7 +13,7 @@ export function DisplayError({
   return (
     <div className='flex min-h-[400px] items-center justify-center'>
       <div className='text-center'>
-        <AlertCircleIcon className='text-destructive mx-auto mb-4 h-12 w-12' />
+        <AlertCircleIcon className='mx-auto mb-4 h-12 w-12 text-destructive' />
         <h3 className='text-lg font-semibold'>{title}</h3>
         <p className='text-muted-foreground'>{message}</p>
       </div>
