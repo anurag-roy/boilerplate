@@ -15,7 +15,7 @@ This is a full-stack TypeScript project with a client-server architecture using 
 
 ## Key Technologies
 
-- **Runtime**: Node.js for JavaScript/TypeScript execution
+- **Runtime**: Bun for JavaScript/TypeScript execution
 - **Backend**: Hono web framework with RPC type generation
 - **Database**: Drizzle ORM for database operations
 - **Frontend**: Vite 8 + React 19 with React Compiler + Shadcn/ui components
@@ -43,8 +43,8 @@ This is a full-stack TypeScript project with a client-server architecture using 
 ## Best Practices
 
 - **Error Handling**: Implement proper error boundaries and HTTP exceptions
-- **Linting**: Run `npm run lint` to lint the code
-- **Code Formatting**: Run `npm run fmt` to format the code
+- **Linting**: Run `bun run lint` to lint the code
+- **Code Formatting**: Run `bun run fmt` to format the code
 
 ## Type Safety Requirements
 

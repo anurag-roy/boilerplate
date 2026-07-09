@@ -6,7 +6,7 @@ Personal full-stack TypeScript starter for new apps. The included to-do UI is a 
 
 | Layer         | Choice                                                     |
 | ------------- | ---------------------------------------------------------- |
-| Runtime       | Node.js + TypeScript                                       |
+| Runtime       | [Bun](https://bun.sh/) + TypeScript                        |
 | API           | [Hono](https://hono.dev/) with RPC type generation         |
 | Database      | [Drizzle ORM](https://orm.drizzle.team/) + SQLite (libSQL) |
 | Validation    | Zod v4                                                     |
@@ -38,44 +38,44 @@ Shared code lives under `server/shared/` and is imported as `@shared/*`. Server 
 
 ```bash
 # Install (root + client)
-npm install
-npm --prefix client install
+bun install
+bun install --cwd client
 
 # Env
 cp .env.example .env
 
 # Push schema & optional seed
-npm run db:push
-npm run db:seed
+bun run db:push
+bun run db:seed
 ```
 
 Run the API (serves `client/dist` in production builds) and the Vite client in separate terminals:
 
 ```bash
-npm run dev          # API on PORT (default 3000)
-npm run dev:client   # Vite dev server
+bun run dev          # API on PORT (default 3000)
+bun run dev:client   # Vite dev server
 ```
 
 ## Scripts
 
-| Script                               | Description                       |
-| ------------------------------------ | --------------------------------- |
-| `npm run dev`                        | API with hot reload (`tsx watch`) |
-| `npm run dev:client`                 | Vite client                       |
-| `npm run build`                      | Build client + prepare server     |
-| `npm start`                          | Run production server             |
-| `npm run typecheck`                  | Typecheck server                  |
-| `npm run lint` / `lint:fix`          | Oxlint                            |
-| `npm run fmt`                        | Oxfmt                             |
-| `npm run db`                         | Drizzle Kit CLI                   |
-| `npm run db:push`                    | Push schema to SQLite             |
-| `npm run db:generate` / `db:migrate` | Generate / run migrations         |
-| `npm run db:studio`                  | Drizzle Studio                    |
-| `npm run db:seed`                    | Seed the database                 |
+| Script                               | Description                   |
+| ------------------------------------ | ----------------------------- |
+| `bun run dev`                        | API with hot reload           |
+| `bun run dev:client`                 | Vite client                   |
+| `bun run build`                      | Build client + prepare server |
+| `bun start`                          | Run production server         |
+| `bun run typecheck`                  | Typecheck server              |
+| `bun run lint` / `lint:fix`          | Oxlint                        |
+| `bun run fmt`                        | Oxfmt                         |
+| `bun run db`                         | Drizzle Kit CLI               |
+| `bun run db:push`                    | Push schema to SQLite         |
+| `bun run db:generate` / `db:migrate` | Generate / run migrations     |
+| `bun run db:studio`                  | Drizzle Studio                |
+| `bun run db:seed`                    | Seed the database             |
 
 ## Docker
 
-Production image builds the Vite client, then runs the Hono server which serves `client/dist` statically (same flow as `npm run build` → `npm start`). On start it runs `drizzle-kit push` so the SQLite schema exists.
+Production image builds the Vite client, then runs the Hono server which serves `client/dist` statically (same flow as `bun run build` → `bun start`). On start it runs `drizzle-kit push` so the SQLite schema exists.
 
 ```bash
 docker build -t boilerplate .

@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["node"],
+    "types": ["bun"],
     "paths": {
       "@server/*": ["./server/*"],
       "@shared/*": ["./server/shared/*"],

@@ -11,6 +11,8 @@ client/node_modules
 client/dist
 client/.tanstack
 
+package-lock.json
+client/package-lock.json
 **/npm-debug.log*
 **/*.tsbuildinfo
 **/.vite

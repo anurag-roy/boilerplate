@@ -1,26 +1,25 @@
 # syntax=docker/dockerfile:1
 
-FROM node:26-bookworm-slim AS build
+FROM oven/bun:1 AS build
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-COPY client/package.json client/package-lock.json ./client/
+COPY package.json bun.lock ./
+COPY client/package.json client/bun.lock ./client/
 
-RUN npm ci && npm --prefix client ci
+RUN bun install --frozen-lockfile && bun install --frozen-lockfile --cwd client
 
 COPY tsconfig.json ./
 COPY server ./server
 COPY client ./client
 
 # Same outcome as server/scripts/build.ts: build the Vite client into client/dist
-RUN npm --prefix client run build
+RUN bun run --cwd client build
 
-FROM node:26-bookworm-slim AS runner
+FROM oven/bun:1 AS runner
 WORKDIR /app
 
-# Install before NODE_ENV=production so tsx / drizzle-kit (devDependencies) are included
-COPY package.json package-lock.json ./
-RUN npm ci && npm cache clean --force
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
 COPY tsconfig.json drizzle.config.ts docker-entrypoint.sh ./
 COPY server ./server

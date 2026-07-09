@@ -1,8 +1,8 @@
-import { serveStatic } from '@hono/node-server/serve-static';
 import { logger } from '@server/lib/logger';
 import { httpLogger } from '@server/lib/middlewares/http-logger';
 import { todoRoute } from '@server/routes/todo';
 import { Hono } from 'hono';
+import { serveStatic } from 'hono/bun';
 import { HTTPException } from 'hono/http-exception';
 
 const app = new Hono();

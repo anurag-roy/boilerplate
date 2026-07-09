@@ -8,23 +8,22 @@
   "type": "module",
   "main": "server/index.ts",
   "scripts": {
-    "dev": "tsx watch --env-file=.env server/index.ts",
-    "dev:client": "npm --prefix client run dev",
-    "build": "npx tsx server/scripts/build.ts",
-    "start": "tsx --env-file=.env server/index.ts",
+    "dev": "bun --env-file=.env --watch server/index.ts",
+    "dev:client": "bun run --cwd client dev",
+    "build": "bun server/scripts/build.ts",
+    "start": "bun --env-file=.env server/index.ts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
-    "db": "drizzle-kit",
-    "db:seed": "tsx --env-file=.env server/scripts/seed.ts",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio",
-    "db:migrate": "drizzle-kit migrate",
-    "db:generate": "drizzle-kit generate"
+    "db": "bunx drizzle-kit",
+    "db:seed": "bun --env-file=.env server/scripts/seed.ts",
+    "db:push": "bunx drizzle-kit push",
+    "db:studio": "bunx drizzle-kit studio",
+    "db:migrate": "bunx drizzle-kit migrate",
+    "db:generate": "bunx drizzle-kit generate"
   },
   "dependencies": {
-    "@hono/node-server": "^2.0.8",
     "@hono/zod-validator": "^0.8.0",
     "@libsql/client": "^0.17.4",
     "drizzle-orm": "^1.0.0-rc.4",
@@ -33,11 +32,10 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@types/node": "^26.1.1",
+    "@types/bun": "^1.2.19",
     "drizzle-kit": "^1.0.0-rc.4",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
-    "tsx": "^4.23.0",
     "typescript": "^7.0.2"
   }
 }
