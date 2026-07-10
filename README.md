@@ -1,6 +1,8 @@
 # Boilerplate
 
-Personal full-stack TypeScript starter for new apps. The included to-do UI is a thin demo of the stack and conventions — not the product.
+An agent-friendly full-stack TypeScript starter for new apps. The included to-do UI is a thin demo of the stack and conventions — not the product.
+
+This repository is a working baseline rather than a hard-coded generator. Node.js, SQLite, and a single-server deployment are sensible defaults, but an agent can adapt the runtime, database, deployment model, and integrations to the needs of each project while preserving a consistent architecture.
 
 ## Stack
 
@@ -16,6 +18,17 @@ Personal full-stack TypeScript starter for new apps. The included to-do UI is a 
 | Data fetching | TanStack Query                                             |
 | Lint / format | Oxlint / Oxfmt                                             |
 
+## Shape the project
+
+Start from this repository and tell an agent what you are building. The guidance in [`AGENTS.md`](AGENTS.md) asks the agent to clarify choices such as:
+
+- Node.js or Bun
+- SQLite, PostgreSQL, or MySQL
+- A single VPS/container or separately hosted client and API
+- Optional integrations such as WebSockets, authentication, and email
+
+Hono remains the backend framework and React remains the frontend framework; the surrounding infrastructure is intentionally replaceable. The first included setup recipes cover the Bun runtime and WebSockets, with more integrations intended to be added over time.
+
 ## Layout
 
 ```
@@ -29,7 +42,7 @@ Personal full-stack TypeScript starter for new apps. The included to-do UI is a 
 │   ├── lib/          # env, logger, middlewares
 │   ├── routes/       # Route handlers (chained for RPC)
 │   └── shared/       # Schemas & types shared with the client
-└── .cursor/rules/    # Project conventions for agents & humans
+└── AGENTS.md         # Project conventions and setup recipes
 ```
 
 Shared code lives under `server/shared/` and is imported as `@shared/*`. Server code uses `@server/*`.
@@ -73,6 +86,21 @@ npm run dev:client   # Vite dev server
 | `npm run db:studio`                  | Drizzle Studio                    |
 | `npm run db:seed`                    | Seed the database                 |
 
+## Deployment
+
+The default production setup is designed for a small VPS or container that runs both parts of the application. `npm run build` builds the Vite client into `client/dist`, and the Hono server serves those static files alongside the API. This keeps the application on one process and one origin, making a low-cost VPS a practical deployment target without requiring a platform-specific hosting provider.
+
+The client can also be hosted separately on Cloudflare Pages or any other static host:
+
+1. Build and deploy `client/dist`.
+2. Add a client environment variable such as `VITE_API_URL=https://api.example.com`.
+3. Use that value as the base URL in `client/src/lib/api.ts` instead of `/`.
+4. Allow the client origin in the server's CORS and authentication configuration.
+
+Vite embeds environment variables at build time, so rebuild the client after changing its API URL. If WebSockets are enabled, configure their public URL and ensure the host or reverse proxy supports connection upgrades as well.
+
+The deployment model is not tied to the default database. Persist the `.data` directory when using SQLite, or point the server at PostgreSQL, MySQL, or another supported database chosen during setup.
+
 ## Docker
 
 Production image builds the Vite client, then runs the Hono server which serves `client/dist` statically (same flow as `npm run build` → `npm start`). On start it runs `drizzle-kit push` so the SQLite schema exists.
@@ -92,7 +120,7 @@ Override `PORT` / `DATABASE_URL` with `-e` if needed. Persist SQLite via the `/a
 - **UI** — shadcn/ui + theme tokens from `client/src/index.css` (`bg-background`, `text-foreground`, etc.), not raw gray scales.
 - **Strict TypeScript** — no `any`; prefer `unknown` when needed.
 
-Agent-oriented detail lives in [`.cursor/rules/`](.cursor/rules/).
+Agent-oriented setup and implementation guidance lives in [`AGENTS.md`](AGENTS.md).
 
 ## License
 
