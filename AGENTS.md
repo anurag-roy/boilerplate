@@ -27,6 +27,39 @@ Use the latest commit on the `bun` branch as the reference (`git show bun`), but
 - Use Bun APIs in build scripts, and Bun base images/commands in Docker and its entrypoint
 - Regenerate both lockfiles, then verify with Bun's install, typecheck, lint, and build commands
 
+### Recipe: PostgreSQL
+
+Replace SQLite/libSQL with PostgreSQL when the user selects it during setup. Drizzle v1 uses table-level `snakeCase` in `pg-core`; do not pass `schema` or `casing` to the Postgres `drizzle()` client (those options were removed from `DrizzlePgConfig`).
+
+**Dependencies** — remove `@libsql/client`; add `pg` and `@types/pg` (dev). Regenerate the lockfile.
+
+**Schema** (`server/db/schema.ts`) — switch imports from `drizzle-orm/sqlite-core` to `drizzle-orm/pg-core`. Map column types: `integer().primaryKey()` → `serial().primaryKey()`, `integer({ mode: 'boolean' })` → `boolean()`. Keep `snakeCase.table()` for column naming.
+
+**Client** (`server/db/index.ts`) — use `drizzle-orm/node-postgres` with a `pg` `Pool`:
+
+```typescript
+import { env } from '@server/lib/env';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  max: 25,
+  idleTimeoutMillis: 60_000,
+  connectionString: env.DATABASE_URL,
+});
+
+export const db = drizzle({ client: pool });
+export const closeDb = () => pool.end();
+
+export type Transaction = Parameters<Parameters<(typeof db)['transaction']>[0]>[0];
+```
+
+**Drizzle Kit** (`drizzle.config.ts`) — set `dialect: 'postgresql'`. Keep `DATABASE_URL` in env validation and `.env.example` (e.g. `postgres://user:password@localhost:5432/dbname`).
+
+**Docker** — remove SQLite-specific bits from `Dockerfile` (`.data` volume, `mkdir -p .data`, default `file:` URL). Add `docker-compose.yml` with a `postgres` service (expose `5432` for local dev, healthcheck, named volume) and an `app` service that sets `DATABASE_URL` to the internal hostname (`db`). The entrypoint can keep running `drizzle-kit push` on start.
+
+Update README database and Docker sections. Run typecheck, lint, and build.
+
 ### Recipe: WebSockets
 
 Define inbound and outbound message schemas in `server/shared/` and validate untrusted messages at runtime. Register `/api/ws` before the static-file catch-all.
