@@ -18,14 +18,66 @@ After the user answers, apply each choice end to end: dependencies, adapters, sh
 
 ### Recipe: Bun
 
-Use the latest commit on the `bun` branch as the reference (`git show bun`), but adapt its changes instead of blindly cherry-picking onto a diverged branch:
+Replace Node.js with Bun when the user selects it during setup.
 
-- Replace root and client npm lockfiles with `bun.lock` files; use Bun commands in scripts and docs
-- Remove `tsx`, `@hono/node-server`, and Node type packages; add `@types/bun`
-- Change TypeScript environment types from `node` to `bun`
-- Start the server with `Bun.serve` and import `serveStatic` from `hono/bun`
-- Use Bun APIs in build scripts, and Bun base images/commands in Docker and its entrypoint
-- Regenerate both lockfiles, then verify with Bun's install, typecheck, lint, and build commands
+**Dependencies** — remove `tsx`, `@hono/node-server`, and `@types/node`. Add `@types/bun` (dev) in both root and `client/`. Regenerate lockfiles with Bun (see below).
+
+**Lockfiles** — delete `package-lock.json` and `client/package-lock.json`. Run `bun install` at the repo root and `bun install --cwd client` to produce `bun.lock` and `client/bun.lock`.
+
+**Scripts** (`package.json`) — use Bun throughout:
+
+```json
+"dev": "bun --env-file=.env --watch server/index.ts",
+"dev:client": "bun run --cwd client dev",
+"build": "bun server/scripts/build.ts",
+"start": "bun --env-file=.env server/index.ts",
+"db": "bunx drizzle-kit",
+"db:seed": "bun --env-file=.env server/scripts/seed.ts",
+"db:push": "bunx drizzle-kit push",
+"db:studio": "bunx drizzle-kit studio",
+"db:migrate": "bunx drizzle-kit migrate",
+"db:generate": "bunx drizzle-kit generate"
+```
+
+**Server** — start with `Bun.serve` in `server/index.ts`:
+
+```typescript
+import app from '@server/app';
+import { env } from '@server/lib/env';
+import { logger } from '@server/lib/logger';
+
+const server = Bun.serve({
+  fetch: app.fetch,
+  port: env.PORT,
+});
+
+logger.info(`Server starting on http://localhost:${server.port}`);
+```
+
+In `server/app.ts`, import `serveStatic` from `hono/bun` instead of `@hono/node-server/serve-static`.
+
+**Build script** (`server/scripts/build.ts`) — use Bun's shell:
+
+```typescript
+import { $ } from 'bun';
+
+await $`bun install`;
+await $`bun install`.cwd('client');
+await $`bun run build`.cwd('client');
+```
+
+**TypeScript** — set `"types": ["bun"]` in root `tsconfig.json` and `client/tsconfig.node.json`; set `"types": ["vite/client", "bun"]` in `client/tsconfig.app.json`.
+
+**Docker** — use `oven/bun:1` for build and runner stages. Copy `bun.lock` files instead of npm lockfiles; install with `bun install --frozen-lockfile`. Build the client with `bun run --cwd client build`. Add `package-lock.json` and `client/package-lock.json` to `.dockerignore`.
+
+**Entrypoint** (`docker-entrypoint.sh`):
+
+```sh
+bunx drizzle-kit push --force
+exec bun server/index.ts
+```
+
+Update README and any editor rules to use `bun` instead of `npm`. Run `bun run typecheck`, `bun run lint`, and `bun run build`.
 
 ### Recipe: PostgreSQL
 
