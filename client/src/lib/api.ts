@@ -1,6 +1,7 @@
 import type { ApiRoutes } from '@server/app';
 import { hc } from 'hono/client';
 import ky, { isHTTPError } from 'ky';
+import { z } from 'zod';
 
 class ApiError extends Error {
   constructor(message: string) {
@@ -9,6 +10,10 @@ class ApiError extends Error {
   }
 }
 
+const apiErrorBodySchema = z.object({
+  message: z.string(),
+});
+
 const kyInstance = ky.create({
   retry: { limit: 0 },
   timeout: 300_000,
@@ -16,15 +21,9 @@ const kyInstance = ky.create({
     beforeError: [
       ({ error }) => {
         if (isHTTPError(error)) {
-          const data = error.data;
-          if (
-            data &&
-            typeof data === 'object' &&
-            data !== null &&
-            'message' in data &&
-            typeof data.message === 'string'
-          ) {
-            return new ApiError(data.message);
+          const parsed = apiErrorBodySchema.safeParse(error.data);
+          if (parsed.success) {
+            return new ApiError(parsed.data.message);
           }
         }
 

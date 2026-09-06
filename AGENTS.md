@@ -158,7 +158,7 @@ Add `client/src/hooks/use-websocket.ts` using the browser's native `WebSocket`. 
 - **Frontend**: Vite 8, React 19, Shadcn/ui (Base UI), TailwindCSS V4
 - **Data**: TanStack Query (server state), TanStack Router (routing)
 - **Validation**: Zod v4
-- **Tooling**: Oxlint (`npm run lint`) with the vendored [anti-slop](https://github.com/dmmulroy/anti-slop) plugin, Oxfmt (`npm run fmt`)
+- **Tooling**: Oxlint (`npm run lint`) with the vendored [anti-slop](https://github.com/dmmulroy/anti-slop) plugin at `tools/oxlint/anti-slop/`, Oxfmt (`npm run fmt`). The lint script enables Node type stripping on Node 22 before 22.18 so the TypeScript plugin loads.
 
 ## General Practices
 

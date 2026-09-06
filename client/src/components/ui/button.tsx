@@ -59,7 +59,7 @@ function Button({
     tooltip?: ReactNode;
     tooltipSide?: 'top' | 'right' | 'bottom' | 'left' | 'inline-start' | 'inline-end';
   }) {
-  const isIconButton = typeof size === 'string' && size.startsWith('icon');
+  const isIconButton = size?.startsWith('icon') ?? false;
   const button = (
     <ButtonPrimitive
       data-slot='button'
