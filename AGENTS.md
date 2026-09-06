@@ -158,13 +158,14 @@ Add `client/src/hooks/use-websocket.ts` using the browser's native `WebSocket`. 
 - **Frontend**: Vite 8, React 19, Shadcn/ui (Base UI), TailwindCSS V4
 - **Data**: TanStack Query (server state), TanStack Router (routing)
 - **Validation**: Zod v4
-- **Tooling**: Oxlint (`npm run lint`), Oxfmt (`npm run fmt`)
+- **Tooling**: Oxlint (`npm run lint`) with the vendored [anti-slop](https://github.com/dmmulroy/anti-slop) plugin, Oxfmt (`npm run fmt`)
 
 ## General Practices
 
 - Type-first: define types/schemas before implementation
 - API-first: design contracts via Hono RPC for end-to-end type safety
-- Validate all inputs with Zod; avoid `any` — use proper types or `unknown`
+- Validate all inputs with Zod; avoid `any` and low-evidence `unknown`/`object` widening
+- Type assertions need a nearby `// SAFETY:` justification that states the invariant
 - Type all parameters and return values
 - Error handling: error boundaries (client), `HTTPException` (server)
 - Server logic in `server/`; client components in `client/src/components/`; routes in `server/routes/`

@@ -24,5 +24,22 @@
     "functions": ["cn", "cva"]
   },
   "sortPackageJson": true,
-  "ignorePatterns": ["node_modules/", "client/dist/", "client/src/routeTree.gen.ts", "drizzle/"]
+  "ignorePatterns": [
+    "node_modules/",
+    "client/dist/",
+    "client/src/routeTree.gen.ts",
+    "drizzle/",
+    ".agent/**",
+    ".agents/**",
+    ".claude/**",
+    ".codex/**",
+    ".continue/**",
+    ".cursor/**",
+    ".gemini/**",
+    ".opencode/**",
+    ".pi/**",
+    ".roo/**",
+    ".windsurf/**",
+    "tools/oxlint/anti-slop/**"
+  ]
 }
